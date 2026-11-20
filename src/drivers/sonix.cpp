@@ -99,8 +99,9 @@ void PollSonix(PollContext& ctx) {
             s.name = KeyboardName(*c);
             s.kind = DeviceKind::Keyboard;
             s.via = L"2.4 GHz receiver";
-            s.connected = level >= 1 && level <= 100;  // 0: keyboard off, out of range or in another mode
-            if (s.connected) s.percent = level;
+            const bool zeroIsUnknown = (m.vid == 0x0C45 && m.pid == 0xFEFE && level == 0);
+s.connected = (level >= 1 && level <= 100) || zeroIsUnknown;
+if (level >= 1 && level <= 100) s.percent = level;
             s.graceSec = 1800;  // keep the last value if a sleeping keyboard stops answering
             ctx.Add(s, m.vid, m.pid);
             break;
